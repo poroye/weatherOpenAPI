@@ -85,7 +85,6 @@ class ViewModel:ObservableObject{
                 let jsondata = try JSONDecoder().decode(weatherInfo.self, from: data)
                 DispatchQueue.main.async{self.weatherdata = jsondata}
                 print("fetch!")
-//                print(jsondata)
 //                print(jsondata.weather[0].main)
             }catch{
                 print("catch \(error)")
@@ -104,7 +103,6 @@ class ViewModel:ObservableObject{
                 let jsondata = try JSONDecoder().decode(AirInfo.self, from: data)
                 DispatchQueue.main.async{self.airdata = jsondata}
                 print("fetch2!")
-//                print(jsondata)
                 print(self.airdata.list[0].main.aqi)
             }catch{
                 print("catch \(error)")
@@ -119,81 +117,112 @@ struct ContentView: View {
     @StateObject var viewModel = ViewModel()
     
     var body: some View {
-        Text("weather app")
-            .onAppear(perform: viewModel.fetch)
-            .font(.largeTitle)
-        Spacer()
-        HStack{
-            Image(uiImage: "https://openweathermap.org/img/wn/\(viewModel.weatherdata.weather[0].icon)@4x.png".load())
-            Text("\(String(format : "%.1f",viewModel.weatherdata.main.temp)) C")
-                .font(.largeTitle)
-        }
-        Text(viewModel.weatherdata.weather[0].main).padding()
-        Text(viewModel.weatherdata.weather[0].description).padding()
-        Spacer()
         VStack{
-            Text("humidity : \(String(format : "%.2f",viewModel.weatherdata.main.humidity))").padding()
-            if viewModel.airdata.list[0].main.aqi == 1{
-                Text("air quality is good").padding()
-            }else if viewModel.airdata.list[0].main.aqi == 2{
-                Text("air quality is fair").padding()
-            }else if viewModel.airdata.list[0].main.aqi == 3{
-                Text("air quality is moderate").padding()
-            }else if viewModel.airdata.list[0].main.aqi == 4{
-                Text("air quality is poor").padding()
-            }else{
-                Text("air quality is very poor").padding()
+//            Spacer()
+            
+            VStack{
+                Spacer()
+                Text("weather app")
+                    .onAppear(perform: viewModel.fetch)
+                    .font(.largeTitle)
+                Spacer()
+                HStack{
+                    Image(uiImage: "https://openweathermap.org/img/wn/\(viewModel.weatherdata.weather[0].icon)@4x.png".load())
+                        .frame(width: 120)
+                        .padding()
+                    Text("\(String(format : "%.1f",viewModel.weatherdata.main.temp))°")
+                        .font(.system(size: 48))
+                        .bold()
+                        .frame(width: 120)
+                        .foregroundColor(.white)
+                        .padding()
+                }
+                Text(viewModel.weatherdata.weather[0].main)
+                    .foregroundColor(.gray)
+                Text(viewModel.weatherdata.weather[0].description)
+                    .bold()
+                    .padding()
+                    .foregroundColor(.white)
+                    .font(.system(size: 46))
+                Spacer()
+                Text("humidity : \(String(format : "%.2f",viewModel.weatherdata.main.humidity))").padding()
+                if viewModel.airdata.list[0].main.aqi == 1{
+                    Text("air quality is good")
+                        .padding()
+                        .foregroundColor(.green)
+                }else if viewModel.airdata.list[0].main.aqi == 2{
+                    Text("air quality is fair")
+                        .padding()
+                        .foregroundColor(.yellow)
+                }else if viewModel.airdata.list[0].main.aqi == 3{
+                    Text("air quality is moderate")
+                        .padding()
+                        .foregroundColor(.orange)
+                }else if viewModel.airdata.list[0].main.aqi == 4{
+                    Text("air quality is poor")
+                        .padding()
+                        .foregroundColor(.red)
+                }else{
+                    Text("air quality is very poor")
+                        .padding()
+                }
             }
-//            Text("\(viewModel.airdata.list[0].main.aqi)")
+            HStack{
+                Spacer()
+                VStack{
+                    Text("CO")
+                    Text("\(String(Int(viewModel.airdata.list[0].components.co)))")
+                }.frame(width: 56)
+                Spacer()
+                VStack{
+                    Text("NO")
+                    Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.no))")
+                }.frame(width: 56)
+                Spacer()
+                VStack{
+                    Text("NO2")
+                    Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.no2))")
+                }.frame(width: 56)
+                Spacer()
+                VStack{
+                    Text("O3")
+                    Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.o3))")
+                }.frame(width: 56)
+                Spacer()
+            }
+                .padding(.all)
+                .frame(height: 56)
+            HStack{
+                Spacer()
+                VStack{
+                    Text("SO2")
+                    Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.so2))")
+                }.frame(width: 56)
+                Spacer()
+                VStack{
+                    Text("PM25")
+                    Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.pm2_5))")
+                }.frame(width: 56)
+                Spacer()
+                VStack{
+                    Text("PM10")
+                    Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.pm10))")
+                }.frame(width: 56)
+                Spacer()
+                VStack{
+                    Text("nh3")
+                    Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.nh3))")
+                }.frame(width: 56)
+                Spacer()
+            }
+                .padding(.all)
+                .frame(height:56)
+            Text("\(viewModel.now)")
+                .padding()
+            Spacer()
         }
-        HStack{
-            Spacer()
-            VStack{
-                Text("CO")
-                Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.co))")
-            }
-            Spacer()
-            VStack{
-                Text("NO")
-                Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.no))")
-            }
-            Spacer()
-            VStack{
-                Text("NO2")
-                Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.no2))")
-            }
-            Spacer()
-            VStack{
-                Text("O3")
-                Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.o3))")
-            }
-            Spacer()
-        }.padding(.all)
-        HStack{
-            Spacer()
-            VStack{
-                Text("SO2")
-                Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.so2))")
-            }
-            Spacer()
-            VStack{
-                Text("PM25")
-                Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.pm2_5))")
-            }
-            Spacer()
-            VStack{
-                Text("PM10")
-                Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.pm10))")
-            }
-            Spacer()
-            VStack{
-                Text("nh3")
-                Text("\(String(format : "%.2f",viewModel.airdata.list[0].components.nh3))")
-            }
-            Spacer()
-        }
-            .padding(.all)
-        Text("\(viewModel.now)")
+        .background(LinearGradient(gradient: Gradient(colors: [.blue,.white]), startPoint: .top, endPoint: .bottom))
+        .ignoresSafeArea()
     }
 }
 
